@@ -1,40 +1,30 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
-
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 
 Route::prefix('v1')->group(function () {
 
-    // Is the API running?
-    Route::get('/ping', function () {
-        return response()->json([
-            'success' => true,
-            'message' => 'Hospital API is running',
-            'time' => now()->toIso8601String(),
-        ]);
+    Route::get('/ping', fn () => response()->json([
+        'success' => true,
+        'message' => 'Hospital API is running',
+        'time' => now()->toIso8601String(),
+    ]));
+
+    // public route: 5 tries per minute
+    Route::post('/auth/login', [AuthController::class, 'login'])
+        ->middleware('throttle:5,1');
+
+    // routes for any logged-in user
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::get('/auth/me', [AuthController::class, 'me']);
+
+        // test route: only admins (uses the RoleMiddleware from the Start here section)
+        Route::middleware('role:super_admin,branch_admin')
+            ->get('/admin/ping', fn () => response()->json([
+                'success' => true,
+                'message' => 'Welcome, admin',
+            ]));
     });
-
-    // Is MongoDB connected? (for testing only, remove later)
-    Route::get('/ping-db', function () {
-        DB::connection('mongodb')
-            ->getMongoClient()
-            ->selectDatabase('admin')
-            ->command(['ping' => 1]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'MongoDB is connected',
-        ]);
-    });
-
-    Route::middleware(['auth:sanctum', 'role:super_admin,branch_admin'])->group(function () {
-    Route::apiResource('doctors', DoctorController::class);
-});
 });
