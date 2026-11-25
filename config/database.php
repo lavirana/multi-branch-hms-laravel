@@ -115,7 +115,7 @@ return [
         ],
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('MONGODB_URI', 'mongodb://127.0.0.1:27017/hospital-api?directConnection=true'),
+            'dsn' => env('MONGODB_URI', 'mongodb://127.0.0.1:27017/hospital_api?directConnection=true'),
             'database' => env('MONGODB_DATABASE', 'hospital_api'),
         ],
 
