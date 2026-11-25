@@ -33,4 +33,8 @@ Route::prefix('v1')->group(function () {
             'message' => 'MongoDB is connected',
         ]);
     });
+
+    Route::middleware(['auth:sanctum', 'role:super_admin,branch_admin'])->group(function () {
+    Route::apiResource('doctors', DoctorController::class);
+});
 });
