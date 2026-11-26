@@ -17,4 +17,9 @@ class Branch extends Model
         'phone',
         'is_active',
     ];
+
+    protected function casts(): array
+    {
+        return ['is_active' => 'boolean'];
+    }
 }
