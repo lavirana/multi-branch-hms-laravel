@@ -22,3 +22,15 @@ Patient -> See own profile, appointments, reports, invoices
 • Appointment: pending, confirmed, completed, cancelled, no_show.
 • Lab request: requested, assigned, in_progress, completed.
 • Invoice: unpaid, partial, paid, cancelled.
+
+## Testing
+
+This project includes automated Feature tests built with PHPUnit to verify authentication, role-based access control (RBAC), and API security.
+
+### Running the Test Suite
+
+Run all tests using Artisan:
+
+```bash
+php artisan test
+```
