@@ -2,28 +2,28 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateDoctorRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $ignoreId = (string) $this->route('doctor')->getKey();
+
         return [
-            //
+            'name' => ['required', 'string', 'max:100'],
+            'specialization_id' => ['required', 'string', Rule::exists('specializations', '_id')],
+            'license_no' => [
+                'required', 'string', 'max:50',
+                Rule::unique('doctors', 'license_no')->ignore($ignoreId, '_id'),
+            ],
+            'bio' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }
